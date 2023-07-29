@@ -1,0 +1,43 @@
+package com.bms.bookmyshow.Services;
+
+import com.bms.bookmyshow.Repositories.ShowRepository;
+import com.bms.bookmyshow.dtos.CreateShowRequest;
+import com.bms.bookmyshow.models.Movie;
+import com.bms.bookmyshow.models.Show;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.NoSuchElementException;
+
+@Service
+@AllArgsConstructor
+public class ShowService {
+    ShowRepository showRepository;
+    MovieService movieService;
+    public Show createShow(CreateShowRequest request){
+        //Task 1 -> Get Movie by ID by calling Movie Service
+
+        Movie movie = movieService.getMovie(request.getMovieId());
+//        if(movie==null)
+//            throw new NoSuchElementException("Movie Not Found");
+        Show show = Show.builder()
+                .startTime(request.getStartTime())
+                .duration(request.getDuration())
+                .movie(movie)
+                .build();
+
+        Show savedShow = showRepository.save(show);
+
+        //Task 2 -> Get seats in Hall using HallId. Create showSeats using saved show and save the show again
+        return savedShow;
+    }
+
+    public Show getShow(Long id){
+
+        return showRepository
+                .findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Invalid ID"));
+    }
+}
