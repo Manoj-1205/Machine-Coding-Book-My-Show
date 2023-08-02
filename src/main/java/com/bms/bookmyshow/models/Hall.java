@@ -2,8 +2,7 @@ package com.bms.bookmyshow.models;
 
 import com.bms.bookmyshow.enums.MovieFeature;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +10,16 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Hall extends BaseModel{
     private String name;
-    @OneToMany
-    private List<Seat> seats=new ArrayList<>();
+    @OneToMany(mappedBy = "hall", cascade = CascadeType.PERSIST)
+    private List<Seats> seats=new ArrayList<>();
 
-    @Enumerated
-    @ElementCollection
-    List<MovieFeature> features=new ArrayList<>();
+//    @Enumerated(EnumType.STRING)
+//    @ElementCollection
+//    List<MovieFeature> features=new ArrayList<>();
 
 }

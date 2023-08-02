@@ -1,9 +1,8 @@
 package com.bms.bookmyshow.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,11 +13,17 @@ import java.util.List;
 @Entity
 @Table(name="shows")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Show extends BaseModel {
     @ManyToOne
     private Movie movie;
     private Date startTime;
     private Double duration;
+
+    @ManyToOne
+    @JsonIgnore
+    private Hall hall;
 
     @OneToMany
     private List<ShowSeat> showSeats=new ArrayList<>();

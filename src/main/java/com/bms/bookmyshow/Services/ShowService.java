@@ -1,7 +1,10 @@
 package com.bms.bookmyshow.Services;
 
+import com.bms.bookmyshow.Repositories.HallRepository;
 import com.bms.bookmyshow.Repositories.ShowRepository;
+import com.bms.bookmyshow.Repositories.ShowSeatRepository;
 import com.bms.bookmyshow.dtos.CreateShowRequest;
+import com.bms.bookmyshow.models.Hall;
 import com.bms.bookmyshow.models.Movie;
 import com.bms.bookmyshow.models.Show;
 import lombok.AllArgsConstructor;
@@ -15,6 +18,8 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class ShowService {
     ShowRepository showRepository;
+    ShowSeatService showSeatService;
+    HallService hallService;
     MovieService movieService;
     public Show createShow(CreateShowRequest request){
         //Task 1 -> Get Movie by ID by calling Movie Service
@@ -22,16 +27,24 @@ public class ShowService {
         Movie movie = movieService.getMovie(request.getMovieId());
 //        if(movie==null)
 //            throw new NoSuchElementException("Movie Not Found");
+        Hall hall = hallService.getHall(request.getHallId());
+        if(hall == null){
+            throw new NoSuchElementException("Invalid Hall Id");
+        }
         Show show = Show.builder()
+                .hall(hall)
                 .startTime(request.getStartTime())
                 .duration(request.getDuration())
                 .movie(movie)
                 .build();
-
         Show savedShow = showRepository.save(show);
+        showSeatService.saveShowSeats(savedShow);
+
+
+
 
         //Task 2 -> Get seats in Hall using HallId. Create showSeats using saved show and save the show again
-        return savedShow;
+        return showRepository.save(savedShow);
     }
 
     public Show getShow(Long id){
